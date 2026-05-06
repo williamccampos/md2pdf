@@ -70,8 +70,27 @@ let currentFilename = 'documento';
 let debounce;
 editor.addEventListener('input', () => {
   clearTimeout(debounce);
-  debounce = setTimeout(() => { preview.innerHTML = marked.parse(editor.value); }, 150);
+  debounce = setTimeout(() => {
+    preview.innerHTML = marked.parse(editor.value);
+    autoTitle();
+  }, 150);
 });
+
+function autoTitle() {
+  const lines = editor.value.trim().split('\n');
+  for (const line of lines) {
+    const match = line.match(/^#+\s+(.+)/);
+    if (match) {
+      currentFilename = match[1].trim().toLowerCase().replace(/[^a-z0-9à-ú\s-]/gi, '').replace(/\s+/g, '-').slice(0, 60);
+      return;
+    }
+    const text = line.trim();
+    if (text && !text.startsWith('---')) {
+      currentFilename = text.toLowerCase().replace(/[^a-z0-9à-ú\s-]/gi, '').replace(/\s+/g, '-').slice(0, 60);
+      return;
+    }
+  }
+}
 
 function loadFile() { document.getElementById('fileInput').click(); }
 
@@ -83,6 +102,7 @@ function handleFile(e) {
     editor.value = ev.target.result;
     preview.innerHTML = marked.parse(editor.value);
     currentFilename = file.name.replace(/\.(md|txt|markdown)$/, '');
+    autoTitle();
   };
   reader.readAsText(file);
 }

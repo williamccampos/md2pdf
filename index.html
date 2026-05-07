@@ -224,21 +224,25 @@ function handleFiles(e) {
   const available = MAX_TABS - tabs.length + (tabs.length === 1 && !tabs[0].content ? 1 : 0);
   const toLoad = files.slice(0, available);
   if (files.length > available) showLimit();
+  const isFirstEmpty = tabs.length === 1 && !tabs[0].content;
+  let lastId = null;
+  let loaded = 0;
   toLoad.forEach((file, i) => {
     const reader = new FileReader();
     reader.onload = (ev) => {
       const content = ev.target.result;
       const name = file.name.replace(/\.(md|txt|markdown)$/, '');
-      if (i === 0 && tabs.length === 1 && !tabs[0].content) {
+      if (i === 0 && isFirstEmpty) {
         tabs[0].content = content;
         tabs[0].name = name;
-        switchTab(tabs[0].id);
+        lastId = tabs[0].id;
       } else {
         const tab = { id: nextId++, name, content };
         tabs.push(tab);
-        if (i === toLoad.length - 1) switchTab(tab.id);
-        else renderTabs();
+        lastId = tab.id;
       }
+      loaded++;
+      if (loaded === toLoad.length) switchTab(lastId);
     };
     reader.readAsText(file);
   });
@@ -266,6 +270,9 @@ function buildPrintStyles() {
 
 function buildContainer(html) {
   const el = document.createElement('div');
+  el.style.position = 'absolute';
+  el.style.left = '-9999px';
+  el.style.top = '0';
   el.innerHTML = `<style>
     .pdf-body h1 { color: #1a1a1a; border-bottom: 2px solid #4da15e; padding-bottom: 6px; margin-bottom: 16px; font-size: 18pt; }
     .pdf-body h2 { color: #2d5a3a; margin-top: 24px; margin-bottom: 8px; font-size: 14pt; }
@@ -283,6 +290,7 @@ function buildContainer(html) {
     .pdf-body strong { color: #111; }
     .pdf-body blockquote { border-left: 3px solid #4da15e; padding-left: 12px; color: #555; }
   </style><div class="pdf-body" style="${buildPrintStyles()}">${html}</div>`;
+  document.body.appendChild(el);
   return el;
 }
 
@@ -298,7 +306,7 @@ function exportCurrentPDF() {
     html2canvas: { scale: 2 },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
     pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-  }).from(el).save();
+  }).from(el).save().then(() => el.remove());
 }
 
 async function exportAllPDF() {
@@ -315,6 +323,7 @@ async function exportAllPDF() {
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
       pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     }).from(el).save();
+    el.remove();
     await new Promise(r => setTimeout(r, 500));
   }
 }

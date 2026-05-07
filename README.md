@@ -1,40 +1,38 @@
-# md2pdf
+# MD → PDF
 
-Conversor simples de Markdown para PDF que roda inteiramente no navegador.
+<p align="center">
+  <img src="logo.svg" width="80" alt="MD→PDF Logo">
+</p>
+
+Conversor de Markdown para PDF direto no navegador. Sem servidor, sem upload — tudo roda localmente.
+
+## Features
+
+- ✍️ Editor Markdown com preview em tempo real
+- 📑 Múltiplas abas — abra até 20 arquivos simultaneamente
+- ⬇️ Export direto para PDF (download automático, sem tela de impressão)
+- 📦 "Todos em PDF" — gera um PDF separado para cada aba
+- 🎨 UI estilo iOS 26 glass
+- 🔒 100% client-side — nenhum dado sai do seu navegador
 
 ## Como usar
 
-1. Clone ou baixe este repositório
-2. Abra o `index.html` em qualquer navegador moderno (Chrome, Firefox, Safari, Edge)
-3. Pronto — sem instalação, sem servidor, sem build
+1. Abra `index.html` no navegador
+2. Cole/digite Markdown ou clique em **📂 Abrir** para carregar arquivos `.md`
+3. Clique em **⬇ PDF** para exportar a aba ativa ou **⬇ Todos em PDF** para exportar todos
 
-## Uso
+## Stack
 
-1. **Escreva ou cole** Markdown no painel esquerdo
-2. **Ou carregue um arquivo** — clique em "📂 Abrir .md" para abrir um arquivo do seu computador
-3. **Preview** atualiza em tempo real no painel direito
-4. **Exportar para PDF** — clique em "⬇ Salvar PDF", depois:
-   - **macOS:** PDF → Salvar como PDF (canto inferior esquerdo do diálogo de impressão)
-   - **Windows:** Selecione "Microsoft Print to PDF" como impressora
-   - **Linux:** Selecione "Imprimir em arquivo" ou "Salvar como PDF"
+- HTML/CSS/JS puro (zero build)
+- [marked.js](https://github.com/markedjs/marked) — parser Markdown
+- [html2pdf.js](https://github.com/eKoopmans/html2pdf.js) — geração de PDF client-side
 
-## Funcionalidades
+## Limites
 
-- Preview em tempo real do Markdown
-- Carregamento de arquivos `.md` / `.txt` do disco
-- Exportação para PDF via diálogo nativo do sistema (escolha qualquer pasta)
-- Nome do PDF gerado automaticamente a partir do título do documento
-- Estilo limpo com suporte a tabelas, código, listas e blockquotes
-- Editor dark mode / preview light mode
-- Arquivo HTML único — funciona offline após o primeiro carregamento
+| Plano | Arquivos simultâneos |
+|-------|---------------------|
+| Free  | 20                  |
 
-## Requisitos
-
-- Qualquer navegador moderno (ES6+)
-- Conexão com internet apenas no primeiro acesso (para o CDN do [marked.js](https://github.com/markedjs/marked))
-
-> Para usar 100% offline, baixe o `marked.min.js` e referencie localmente no `index.html`.
-
-## Licença
+## License
 
 MIT

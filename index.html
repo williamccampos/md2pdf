@@ -6,11 +6,88 @@
 <title>MD → PDF</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #e0e0e0; min-height: 100vh; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; background: #0a0a0a; color: #e0e0e0; min-height: 100vh; }
 .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+
+/* iOS 26 Glass Nav */
+nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  margin-bottom: 16px;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(40px) saturate(1.8);
+  -webkit-backdrop-filter: blur(40px) saturate(1.8);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+nav::-webkit-scrollbar { display: none; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 10px;
+  font-size: 0.78em;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #aaa;
+  border: 1px solid transparent;
+  position: relative;
+}
+.nav-item:hover { background: rgba(255,255,255,0.08); color: #e0e0e0; }
+.nav-item.active {
+  background: rgba(77,161,94,0.15);
+  color: #4da15e;
+  border-color: rgba(77,161,94,0.3);
+}
+.nav-item .close {
+  display: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  font-size: 9px;
+  line-height: 14px;
+  text-align: center;
+  color: #888;
+  margin-left: 2px;
+}
+.nav-item:hover .close { display: inline-block; }
+.nav-item .close:hover { background: #ff453a; color: white; }
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  padding-left: 10px;
+  border-left: 1px solid rgba(255,255,255,0.1);
+}
+.nav-btn {
+  padding: 7px 12px;
+  border-radius: 10px;
+  font-size: 0.78em;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.nav-btn-ghost { background: transparent; color: #aaa; }
+.nav-btn-ghost:hover { background: rgba(255,255,255,0.08); color: #e0e0e0; }
+.nav-btn-primary { background: linear-gradient(135deg, #4da15e, #30d158); color: white; }
+.nav-btn-primary:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(77,161,94,0.3); }
+
+header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 h1 { font-size: 1.4em; font-weight: 600; background: linear-gradient(135deg, #4da15e, #30d158); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; height: calc(100vh - 120px); }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; height: calc(100vh - 160px); }
 .panel { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; }
 .panel h3 { font-size: 0.8em; color: #888; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
 textarea { flex: 1; background: #111; border: 1px solid #2a2a2a; border-radius: 8px; padding: 12px; color: #e0e0e0; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.85em; resize: none; outline: none; line-height: 1.5; }
@@ -31,25 +108,29 @@ textarea:focus { border-color: #4da15e; }
 #preview pre code { background: none; padding: 0; }
 #preview strong { color: #111; }
 #preview blockquote { border-left: 3px solid #4da15e; padding-left: 12px; color: #555; margin: 12px 0; }
-.toolbar { display: flex; gap: 8px; align-items: center; }
-.btn { padding: 8px 16px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.82em; transition: all 0.2s; }
-.btn-primary { background: linear-gradient(135deg, #4da15e, #30d158); color: white; }
-.btn-primary:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(77,161,94,0.3); }
-.btn-secondary { background: #2a2a2a; color: #ccc; border: 1px solid #444; }
-.btn-secondary:hover { background: #333; }
 @media (max-width: 768px) { .grid { grid-template-columns: 1fr; height: auto; } .panel { min-height: 300px; } }
 </style>
 </head>
 <body>
 <div class="container">
   <header>
-    <h1>📄 MD → PDF</h1>
-    <div class="toolbar">
-      <button class="btn btn-secondary" onclick="loadFile()">📂 Abrir .md</button>
-      <button class="btn btn-primary" onclick="exportPDF()">⬇ Salvar PDF</button>
-      <input type="file" id="fileInput" accept=".md,.txt,.markdown" style="display:none" onchange="handleFile(event)">
-    </div>
+    <h1><img src="logo.svg" alt="MD→PDF" style="width:28px;height:28px;vertical-align:middle;margin-right:8px;">MD → PDF</h1>
   </header>
+
+  <nav id="tabBar">
+    <div class="nav-item active" data-id="0" onclick="switchTab(0)">
+      <span class="label">Sem título</span>
+      <span class="close" onclick="closeTab(event,0)">✕</span>
+    </div>
+    <div class="nav-actions">
+      <button class="nav-btn nav-btn-ghost" onclick="addTab()">＋ Novo</button>
+      <button class="nav-btn nav-btn-ghost" onclick="loadFiles()">📂 Abrir</button>
+      <button class="nav-btn nav-btn-ghost" onclick="exportCurrentPDF()">⬇ PDF</button>
+      <button class="nav-btn nav-btn-primary" onclick="exportAllPDF()">⬇ Todos em PDF</button>
+      <input type="file" id="fileInput" accept=".md,.txt,.markdown" multiple style="display:none" onchange="handleFiles(event)">
+    </div>
+  </nav>
+
   <div class="grid">
     <div class="panel">
       <h3>Markdown</h3>
@@ -62,77 +143,180 @@ textarea:focus { border-color: #4da15e; }
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.2/html2pdf.bundle.min.js"></script>
 <script>
 const editor = document.getElementById('editor');
 const preview = document.getElementById('preview');
-let currentFilename = 'documento';
+const tabBar = document.getElementById('tabBar');
+
+const MAX_TABS = 20;
+
+let tabs = [{ id: 0, name: 'Sem título', content: '' }];
+let activeTab = 0;
+let nextId = 1;
+
+function showLimit() {
+  const toast = document.createElement('div');
+  toast.textContent = `Limite de ${MAX_TABS} arquivos atingido`;
+  Object.assign(toast.style, {
+    position: 'fixed', bottom: '24px', left: '50%', transform: 'translateX(-50%)',
+    padding: '10px 20px', borderRadius: '10px', fontSize: '0.82em', fontWeight: '600',
+    background: 'rgba(255,69,58,0.9)', color: 'white', backdropFilter: 'blur(20px)',
+    zIndex: '9999', transition: 'opacity 0.3s'
+  });
+  document.body.appendChild(toast);
+  setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 2500);
+}
+
+function renderTabs() {
+  const actions = tabBar.querySelector('.nav-actions');
+  tabBar.querySelectorAll('.nav-item').forEach(el => el.remove());
+  tabs.forEach(tab => {
+    const el = document.createElement('div');
+    el.className = 'nav-item' + (tab.id === activeTab ? ' active' : '');
+    el.dataset.id = tab.id;
+    el.onclick = (e) => { if (!e.target.classList.contains('close')) switchTab(tab.id); };
+    el.innerHTML = `<span class="label">${tab.name}</span>${tabs.length > 1 ? '<span class="close" onclick="closeTab(event,' + tab.id + ')">✕</span>' : ''}`;
+    tabBar.insertBefore(el, actions);
+  });
+}
+
+function switchTab(id) {
+  const current = tabs.find(t => t.id === activeTab);
+  if (current) current.content = editor.value;
+  activeTab = id;
+  const tab = tabs.find(t => t.id === id);
+  editor.value = tab.content;
+  preview.innerHTML = marked.parse(tab.content);
+  renderTabs();
+}
+
+function addTab() {
+  if (tabs.length >= MAX_TABS) { showLimit(); return; }
+  const tab = { id: nextId++, name: 'Sem título', content: '' };
+  tabs.push(tab);
+  switchTab(tab.id);
+}
+
+function closeTab(e, id) {
+  e.stopPropagation();
+  if (tabs.length <= 1) return;
+  tabs = tabs.filter(t => t.id !== id);
+  if (activeTab === id) switchTab(tabs[0].id);
+  else renderTabs();
+}
+
+function getTabName(content, filename) {
+  if (filename) return filename.replace(/\.(md|txt|markdown)$/, '');
+  const lines = content.trim().split('\n');
+  for (const line of lines) {
+    const match = line.match(/^#+\s+(.+)/);
+    if (match) return match[1].trim().slice(0, 40);
+  }
+  return 'Sem título';
+}
+
+function loadFiles() { document.getElementById('fileInput').click(); }
+
+function handleFiles(e) {
+  const files = Array.from(e.target.files);
+  if (!files.length) return;
+  const available = MAX_TABS - tabs.length + (tabs.length === 1 && !tabs[0].content ? 1 : 0);
+  const toLoad = files.slice(0, available);
+  if (files.length > available) showLimit();
+  toLoad.forEach((file, i) => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const content = ev.target.result;
+      const name = file.name.replace(/\.(md|txt|markdown)$/, '');
+      if (i === 0 && tabs.length === 1 && !tabs[0].content) {
+        tabs[0].content = content;
+        tabs[0].name = name;
+        switchTab(tabs[0].id);
+      } else {
+        const tab = { id: nextId++, name, content };
+        tabs.push(tab);
+        if (i === toLoad.length - 1) switchTab(tab.id);
+        else renderTabs();
+      }
+    };
+    reader.readAsText(file);
+  });
+  e.target.value = '';
+}
 
 let debounce;
 editor.addEventListener('input', () => {
   clearTimeout(debounce);
   debounce = setTimeout(() => {
+    const tab = tabs.find(t => t.id === activeTab);
+    tab.content = editor.value;
+    tab.name = getTabName(editor.value);
     preview.innerHTML = marked.parse(editor.value);
-    autoTitle();
+    renderTabs();
   }, 150);
 });
 
-function autoTitle() {
-  const lines = editor.value.trim().split('\n');
-  for (const line of lines) {
-    const match = line.match(/^#+\s+(.+)/);
-    if (match) {
-      currentFilename = match[1].trim().toLowerCase().replace(/[^a-z0-9à-ú\s-]/gi, '').replace(/\s+/g, '-').slice(0, 60);
-      return;
-    }
-    const text = line.trim();
-    if (text && !text.startsWith('---')) {
-      currentFilename = text.toLowerCase().replace(/[^a-z0-9à-ú\s-]/gi, '').replace(/\s+/g, '-').slice(0, 60);
-      return;
-    }
+function buildPrintStyles() {
+  return `
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    max-width: 700px; margin: 0 auto; padding: 40px; color: #1a1a1a; line-height: 1.6; font-size: 11pt;
+  `;
+}
+
+function buildContainer(html) {
+  const el = document.createElement('div');
+  el.innerHTML = `<style>
+    .pdf-body h1 { color: #1a1a1a; border-bottom: 2px solid #4da15e; padding-bottom: 6px; margin-bottom: 16px; font-size: 18pt; }
+    .pdf-body h2 { color: #2d5a3a; margin-top: 24px; margin-bottom: 8px; font-size: 14pt; }
+    .pdf-body h3 { color: #333; margin-top: 16px; margin-bottom: 6px; font-size: 12pt; }
+    .pdf-body table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 9pt; }
+    .pdf-body th, .pdf-body td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; }
+    .pdf-body th { background: #4da15e; color: white; }
+    .pdf-body tr:nth-child(even) { background: #f5f5f5; }
+    .pdf-body hr { border: none; border-top: 1px solid #ddd; margin: 20px 0; }
+    .pdf-body code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 0.9em; }
+    .pdf-body pre { background: #f5f5f5; padding: 12px; border-radius: 6px; overflow-x: auto; }
+    .pdf-body pre code { background: none; padding: 0; }
+    .pdf-body ul, .pdf-body ol { padding-left: 20px; }
+    .pdf-body li { margin-bottom: 3px; }
+    .pdf-body strong { color: #111; }
+    .pdf-body blockquote { border-left: 3px solid #4da15e; padding-left: 12px; color: #555; }
+  </style><div class="pdf-body" style="${buildPrintStyles()}">${html}</div>`;
+  return el;
+}
+
+function exportCurrentPDF() {
+  const tab = tabs.find(t => t.id === activeTab);
+  if (!tab || !tab.content) return;
+  const html = marked.parse(tab.content);
+  const el = buildContainer(html);
+  html2pdf().set({
+    margin: [10, 10, 10, 10],
+    filename: (tab.name || 'documento') + '.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+  }).from(el).save();
+}
+
+async function exportAllPDF() {
+  const filled = tabs.filter(t => t.content.trim());
+  if (!filled.length) return;
+  for (const tab of filled) {
+    const html = marked.parse(tab.content);
+    const el = buildContainer(html);
+    await html2pdf().set({
+      margin: [10, 10, 10, 10],
+      filename: (tab.name || 'documento') + '.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    }).from(el).save();
+    await new Promise(r => setTimeout(r, 500));
   }
-}
-
-function loadFile() { document.getElementById('fileInput').click(); }
-
-function handleFile(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    editor.value = ev.target.result;
-    preview.innerHTML = marked.parse(editor.value);
-    currentFilename = file.name.replace(/\.(md|txt|markdown)$/, '');
-    autoTitle();
-  };
-  reader.readAsText(file);
-}
-
-function exportPDF() {
-  const content = preview.innerHTML;
-  if (!content) return;
-
-  const printWindow = window.open('', '_blank');
-  printWindow.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${currentFilename}</title><style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; max-width: 700px; margin: 0 auto; padding: 40px; color: #1a1a1a; line-height: 1.6; font-size: 11pt; }
-    h1 { color: #1a1a1a; border-bottom: 2px solid #4da15e; padding-bottom: 6px; margin-bottom: 16px; font-size: 18pt; }
-    h2 { color: #2d5a3a; margin-top: 24px; margin-bottom: 8px; font-size: 14pt; }
-    h3 { color: #333; margin-top: 16px; margin-bottom: 6px; font-size: 12pt; }
-    table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 9pt; }
-    th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; }
-    th { background: #4da15e; color: white; }
-    tr:nth-child(even) { background: #f5f5f5; }
-    hr { border: none; border-top: 1px solid #ddd; margin: 20px 0; }
-    code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 0.9em; }
-    pre { background: #f5f5f5; padding: 12px; border-radius: 6px; overflow-x: auto; }
-    pre code { background: none; padding: 0; }
-    ul, ol { padding-left: 20px; }
-    li { margin-bottom: 3px; }
-    strong { color: #111; }
-    blockquote { border-left: 3px solid #4da15e; padding-left: 12px; color: #555; }
-    @media print { body { padding: 20px; } }
-  </style></head><body>${content}</body></html>`);
-  printWindow.document.close();
-  setTimeout(() => { printWindow.print(); }, 300);
 }
 </script>
 </body>

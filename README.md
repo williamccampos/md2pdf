@@ -4,6 +4,10 @@
   <img src="logo.svg" width="80" alt="MD→PDF Logo">
 </p>
 
+<p align="center">
+  <a href="https://williamccampos.github.io/md2pdf/">🌐 Acesse online</a>
+</p>
+
 Conversor de Markdown para PDF direto no navegador. Sem servidor, sem upload — tudo roda localmente.
 
 ## Features

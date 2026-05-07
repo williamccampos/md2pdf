@@ -275,11 +275,9 @@ function buildPrintStyles() {
 
 function buildContainer(html) {
   const el = document.createElement('div');
-  el.style.cssText = 'position:fixed;left:0;top:0;width:700px;z-index:-1;opacity:0;pointer-events:none;';
+  el.style.cssText = 'position:absolute;left:0;top:0;width:700px;background:#fff;z-index:9999;';
   el.innerHTML = `<div class="pdf-body" style="${buildPrintStyles()}">${html}</div>`;
   document.body.appendChild(el);
-
-  // Apply styles inline since html2canvas ignores <style> tags
   el.querySelectorAll('h1').forEach(n => n.style.cssText = 'color:#1a1a1a;border-bottom:2px solid #4da15e;padding-bottom:6px;margin-bottom:16px;font-size:18pt;');
   el.querySelectorAll('h2').forEach(n => n.style.cssText = 'color:#2d5a3a;margin-top:24px;margin-bottom:8px;font-size:14pt;');
   el.querySelectorAll('h3').forEach(n => n.style.cssText = 'color:#333;margin-top:16px;margin-bottom:6px;font-size:12pt;');
@@ -303,10 +301,10 @@ function exportCurrentPDF() {
     margin: [10, 10, 10, 10],
     filename: (tab.name || 'documento') + '.pdf',
     image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2 },
+    html2canvas: { scale: 2, useCORS: true, logging: false },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
     pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-  }).from(el).save().then(() => el.remove());
+  }).from(el.querySelector('.pdf-body')).save().then(() => el.remove());
 }
 
 async function exportAllPDF() {
@@ -319,10 +317,10 @@ async function exportAllPDF() {
       margin: [10, 10, 10, 10],
       filename: (tab.name || 'documento') + '.pdf',
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
+      html2canvas: { scale: 2, useCORS: true, logging: false },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
       pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-    }).from(el).save();
+    }).from(el.querySelector('.pdf-body')).save();
     el.remove();
     await new Promise(r => setTimeout(r, 500));
   }

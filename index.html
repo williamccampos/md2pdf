@@ -182,8 +182,10 @@ function renderTabs() {
 }
 
 function switchTab(id) {
-  const current = tabs.find(t => t.id === activeTab);
-  if (current) current.content = editor.value;
+  if (activeTab !== id) {
+    const current = tabs.find(t => t.id === activeTab);
+    if (current) current.content = editor.value;
+  }
   activeTab = id;
   const tab = tabs.find(t => t.id === id);
   editor.value = tab.content;
@@ -225,7 +227,6 @@ function handleFiles(e) {
   const toLoad = files.slice(0, available);
   if (files.length > available) showLimit();
   const isFirstEmpty = tabs.length === 1 && !tabs[0].content;
-  let lastId = null;
   let loaded = 0;
   toLoad.forEach((file, i) => {
     const reader = new FileReader();
@@ -235,14 +236,18 @@ function handleFiles(e) {
       if (i === 0 && isFirstEmpty) {
         tabs[0].content = content;
         tabs[0].name = name;
-        lastId = tabs[0].id;
       } else {
-        const tab = { id: nextId++, name, content };
-        tabs.push(tab);
-        lastId = tab.id;
+        tabs.push({ id: nextId++, name, content });
       }
       loaded++;
-      if (loaded === toLoad.length) switchTab(lastId);
+      if (loaded === toLoad.length) {
+        const targetId = (isFirstEmpty) ? tabs[0].id : tabs[tabs.length - 1].id;
+        activeTab = targetId;
+        const tab = tabs.find(t => t.id === targetId);
+        editor.value = tab.content;
+        preview.innerHTML = marked.parse(tab.content);
+        renderTabs();
+      }
     };
     reader.readAsText(file);
   });
